@@ -1,0 +1,36 @@
+obj
+bin
+
+# Visual Studio
+.vs
+*.sln.DotSettings.user
+*.csproj.user
+
+# Rider
+.idea
+
+# Nuget
+nuget.sh
+
+# Tye folders
+.tye/
+.volumes/
+
+# build/publish folders
+DotnetApiTemplate/certificates
+DotnetApiTemplate/publish
+
+# Apple files
+.DS_Store
+
+# Nuget
+nuget.config
+
+# Global sdk override
+global.json
+
+# APNS
+*.p8
+
+# certificates
+*.cer

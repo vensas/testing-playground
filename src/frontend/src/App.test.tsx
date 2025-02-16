@@ -1,9 +1,11 @@
+/* eslint-disable testing-library/no-unnecessary-act */
+/* eslint-disable testing-library/no-wait-for-multiple-assertions */
 import {
   render,
   screen,
   fireEvent,
-  act,
   waitFor,
+  act,
 } from '@testing-library/react';
 import App, { Vote, VoteResult } from './App';
 import '@testing-library/jest-dom';
@@ -31,21 +33,19 @@ test('renders vote list', async () => {
     } as any)
   );
 
-  await act(async () => {
-    render(<App />);
-  });
+  render(<App />);
 
-  expect(screen.getByText(/Votes List/i)).toBeInTheDocument();
-  expect(screen.getByText(/Gimli/i)).toBeInTheDocument();
-  expect(screen.getByText(/Lonely Mountain/i)).toBeInTheDocument();
-  expect(screen.getByText(/Boromir/i)).toBeInTheDocument();
-  expect(screen.getByText(/Gondor/i)).toBeInTheDocument();
+  await waitFor(() => {
+    expect(screen.getByText(/Votes List/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gimli/i)).toBeInTheDocument();
+    expect(screen.getByText(/Lonely Mountain/i)).toBeInTheDocument();
+    expect(screen.getByText(/Boromir/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gondor/i)).toBeInTheDocument();
+  });
 });
 
 test('adds a vote', async () => {
-  await act(async () => {
-    render(<App />);
-  });
+  render(<App />);
 
   fireEvent.change(screen.getByLabelText(/Candidate/i), {
     target: { value: 'Gimli' },
@@ -58,12 +58,14 @@ test('adds a vote', async () => {
     fireEvent.click(screen.getByText(/Add Vote/i));
   });
 
-  expect(fetch as jest.Mock).toBeCalledWith('/votes', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ candidate: 'Gimli', party: 'Lonely Mountain' }),
+  await waitFor(() => {
+    expect(fetch as jest.Mock).toBeCalledWith('/votes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ candidate: 'Gimli', party: 'Lonely Mountain' }),
+    });
   });
 });
 
@@ -86,8 +88,6 @@ test('shows results', async () => {
     fireEvent.click(screen.getByText(/Calculate Result/i));
   });
 
-  await waitFor(() => {
-    expect(screen.getByText(/Lonely Mountain: 2/i)).toBeInTheDocument();
-    expect(screen.getByText(/Gondor: 1/i)).toBeInTheDocument();
-  });
+  expect(screen.getByText(/Lonely Mountain: 2/i)).toBeInTheDocument();
+  expect(screen.getByText(/Gondor: 1/i)).toBeInTheDocument();
 });

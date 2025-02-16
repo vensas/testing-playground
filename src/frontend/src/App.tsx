@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Container,
   Button,
@@ -10,6 +10,7 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  Box,
 } from '@mui/material';
 import { Stack } from '@mui/system';
 
@@ -23,22 +24,28 @@ export interface VoteResult {
   party: string;
 }
 
-const App: React.FC = () => {
+function useVotes() {
   const [votes, setVotes] = useState<Vote[] | undefined>([]);
+
+  const fetchVotes = useCallback(async () => {
+    const response = await fetch('/votes');
+    const data = await response.json();
+    setVotes(data);
+  }, [setVotes]);
+
+  useEffect(() => {
+    fetchVotes();
+  }, [fetchVotes]);
+
+  return { votes, fetchVotes };
+}
+
+const App: React.FC = () => {
+  const { votes, fetchVotes } = useVotes();
   const [candidate, setCandidate] = useState('');
   const [party, setParty] = useState('');
   const [resultOpen, setResultOpen] = useState(false);
   const [result, setResult] = useState<VoteResult[] | undefined>([]);
-
-  useEffect(() => {
-    fetchVotes();
-  }, []);
-
-  const fetchVotes = async () => {
-    const response = await fetch('/votes');
-    const data = await response.json();
-    setVotes(data);
-  };
 
   const addVote = async () => {
     await fetch('/votes', {
@@ -106,6 +113,12 @@ const App: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <Box sx={{ background: 'white' }}>
+        <Typography variant='h1' color='white'>
+          Not readable
+        </Typography>
+      </Box>
     </Container>
   );
 };

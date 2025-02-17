@@ -14,6 +14,10 @@ import {
 } from '@mui/material';
 import { Stack } from '@mui/system';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const votesUrl = `${BACKEND_URL}/votes`;
+const resultsUrl = `${BACKEND_URL}/results`;
+
 export interface Vote {
   candidate: string;
   party: string;
@@ -28,7 +32,7 @@ function useVotes() {
   const [votes, setVotes] = useState<Vote[] | undefined>([]);
 
   const fetchVotes = useCallback(async () => {
-    const response = await fetch('/votes');
+    const response = await fetch(votesUrl);
     const data = await response.json();
     setVotes(data);
   }, [setVotes]);
@@ -48,7 +52,7 @@ const App: React.FC = () => {
   const [result, setResult] = useState<VoteResult[] | undefined>([]);
 
   const addVote = async () => {
-    await fetch('/votes', {
+    await fetch(votesUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -61,7 +65,7 @@ const App: React.FC = () => {
   };
 
   const calculateResult = async () => {
-    const response = await fetch('/results');
+    const response = await fetch(resultsUrl);
     const data = await response.json();
     setResult(data);
     setResultOpen(true);

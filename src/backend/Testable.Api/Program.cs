@@ -14,32 +14,46 @@ builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
 builder.Services.AddScoped<VoteValidator>();
 builder.Services.AddScoped<VoteRegistrar>();
 builder.Services.AddScoped<VoteResultCalculator>();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
 await dbContext.Database.MigrateAsync();
 
-app.MapGet("/votes", async (DatabaseContext dbContext) =>
+await dbContext.Votes.ExecuteDeleteAsync();
+
+var votesGroup = app.MapGroup("/votes")
+    .WithTags("Votes");
+votesGroup.MapGet("/", async (DatabaseContext db) =>
 {
-    var votes = await dbContext.Votes
+    var votes = await db.Votes
         .Select(v => new { v.Id, v.Candidate, v.Party, v.Timestamp })
         .OrderByDescending(v => v.Timestamp)
         .ToListAsync();
     return Results.Ok(votes);
 });
-
-app.MapPost("/votes", async (VoteRegistrar voteRegistrar, [FromBody] Vote vote) =>
+votesGroup.MapPost("/", async (VoteRegistrar voteRegistrar, [FromBody] Vote vote) =>
 {
     var registeredVoteId = await voteRegistrar.RegisterVoteAsync(vote);
     return Results.Created($"/votes/{registeredVoteId}", registeredVoteId);
 });
-
-app.MapGet("/results", async (VoteResultCalculator calculator) =>
-{
-    var aggregatedVotes = await calculator.CalculateResultsAsync();
-    return Results.Ok(aggregatedVotes);
-});
+var resultsGroup = app.MapGroup("/results")
+    .WithTags("Results");
+resultsGroup.MapGet("/", async (VoteResultCalculator calculator) =>
+    {
+        var aggregatedVotes = await calculator.CalculateResultsAsync();
+        return Results.Ok(aggregatedVotes);
+    })
+    // Add result type to the OpenAPI document
+    .Produces<List<VoteResult>>(200);
 
 app.Run();
 
@@ -110,6 +124,7 @@ public class VoteResultCalculator
                 Party = g.Key,
                 VoteCount = g.Count()
             })
+            .OrderByDescending(v => v.VoteCount)
             .ToListAsync();
     }
 }

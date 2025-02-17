@@ -11,8 +11,16 @@ Showcase several ways to test modern applications by example of a .NET service a
 - [.NET 9](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [React 19](https://reactjs.org/)
 - [Node.js](https://nodejs.org/)
-- [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/)
 - [Podman](https://podman.io/getting-started/installation)
+
+## Test Frameworks used
+- [Jest](https://jestjs.io)
+- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+- [XUnit](https://xunit.net/)
+- [TestContainers](https://testcontainers.com/)
+- [Playwright](https://playwright.dev)
+- [Axe](https://www.deque.com/axe/)
+- [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/)
 
 ## Usage
 
@@ -55,6 +63,13 @@ dotnet test
 cd src/frontend
 npm install
 npm run test
+```
+
+## Run frontend playwright tests
+```sh
+cd src/frontend
+npm install
+npm run playwright
 ```
 
 ## Run k6 performance tests

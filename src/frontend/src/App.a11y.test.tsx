@@ -15,8 +15,11 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+// Tests for all rules here https://dequeuniversity.com/rules/axe/4.9
 test('App should have no accessibility violations', async () => {
   const { container } = await act(() => render(<App />));
-  const results = await axe(container);
+  const results = await axe(container, {
+    rules: { 'target-size': { enabled: true } },
+  });
   expect(results).toHaveNoViolations();
 });

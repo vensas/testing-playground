@@ -6,7 +6,7 @@ test.describe('App', () => {
   });
 
   test('should display the title', async ({ page }) => {
-    await expect(page.locator('h1')).toHaveText('Votes');
+    await expect(page.locator('h3')).toHaveText('Votes');
   });
 
   test('should add a vote', async ({ page }) => {
@@ -45,4 +45,5 @@ test.describe('App', () => {
     const addVoteButton = await page.getByTestId('add-vote');
     await expect(addVoteButton).toBeEnabled();
   });
+
 });

@@ -15,7 +15,11 @@ import {
   Paper,
 } from '@mui/material';
 import { Stack } from '@mui/system';
-import { CheckCircle, HowToVote, ThumbUpAltOutlined } from '@mui/icons-material';
+import {
+  CheckCircle,
+  HowToVote,
+  ThumbUpAltOutlined,
+} from '@mui/icons-material';
 
 // Load BACKEND_URL from environment variables
 const BACKEND_URL = process.env.BACKEND_URL;
@@ -87,21 +91,28 @@ const App: React.FC = () => {
           <TextField
             label='Candidate'
             value={candidate}
+            data-testid='candidate'
             onChange={(e) => setCandidate(e.target.value)}
           />
           <TextField
             label='Party'
             value={party}
+            data-testid='party'
             onChange={(e) => setParty(e.target.value)}
           />
           <Button
+            data-testid='add-vote'
             variant='outlined'
             disabled={!candidate?.length || !party?.length}
             onClick={addVote}
           >
             Add Vote
           </Button>
-          <Button variant='contained' onClick={calculateResult}>
+          <Button
+            data-testid='calculate'
+            variant='contained'
+            onClick={calculateResult}
+          >
             Calculate Result
           </Button>
         </Stack>
@@ -114,7 +125,7 @@ const App: React.FC = () => {
           Candidate (Party). Total : {votes?.length}
         </Typography>
         {votes?.length === 0 && (
-          <Typography variant='caption'>No votes</Typography>
+          <Typography variant='caption' data-testid="no-votes">No votes</Typography>
         )}
         {!!votes?.length && (
           <List>
@@ -134,13 +145,15 @@ const App: React.FC = () => {
             {!!result?.length ? (
               <List>
                 {result != null &&
-                  result.map((result,index) => (
-                    <ListItem key={result.party} >
-                       <ListItemAvatar>
-                        {index === 0 && <CheckCircle color="success" />}
-                       {index > 0 &&  <HowToVote /> }
+                  result.map((result, index) => (
+                    <ListItem key={result.party}>
+                      <ListItemAvatar>
+                        {index === 0 && <CheckCircle color='success' />}
+                        {index > 0 && <HowToVote />}
                       </ListItemAvatar>
-                      <ListItemText primary={`${result.party} (${result.voteCount})`} />
+                      <ListItemText
+                        primary={`${result.party} (${result.voteCount})`}
+                      />
                     </ListItem>
                   ))}
               </List>

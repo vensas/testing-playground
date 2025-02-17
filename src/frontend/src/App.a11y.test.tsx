@@ -1,4 +1,4 @@
-/* eslint-disable testing-library/no-unnecessary-act */
+import React from 'react';
 import { act, render } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import App from './App';

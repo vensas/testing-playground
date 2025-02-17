@@ -82,7 +82,7 @@ const App: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant='h1'>Votes</Typography>
+      <Typography variant='h3'>Votes</Typography>
       <Paper
         sx={(theme) => ({ mt: theme.spacing(4), padding: theme.spacing(2) })}
       >

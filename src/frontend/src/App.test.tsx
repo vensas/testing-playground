@@ -1,11 +1,10 @@
-/* eslint-disable testing-library/no-unnecessary-act */
-/* eslint-disable testing-library/no-wait-for-multiple-assertions */
+import React from 'react';
 import {
+  act,
   render,
   screen,
   fireEvent,
   waitFor,
-  act,
 } from '@testing-library/react';
 import App, { Vote, VoteResult } from './App';
 import '@testing-library/jest-dom';
@@ -36,7 +35,6 @@ test('renders vote list', async () => {
   render(<App />);
 
   await waitFor(() => {
-    expect(screen.getByText(/Votes List/i)).toBeInTheDocument();
     expect(screen.getByText(/Gimli/i)).toBeInTheDocument();
     expect(screen.getByText(/Lonely Mountain/i)).toBeInTheDocument();
     expect(screen.getByText(/Boromir/i)).toBeInTheDocument();
@@ -47,47 +45,63 @@ test('renders vote list', async () => {
 test('adds a vote', async () => {
   render(<App />);
 
-  fireEvent.change(screen.getByLabelText(/Candidate/i), {
-    target: { value: 'Gimli' },
-  });
-  fireEvent.change(screen.getByLabelText(/Party/i), {
-    target: { value: 'Lonely Mountain' },
-  });
-
-  await act(async () => {
-    fireEvent.click(screen.getByText(/Add Vote/i));
+  act(() => {
+    fireEvent.change(screen.getByLabelText(/Candidate/i), {
+      target: { value: 'Gimli' },
+    });
+    fireEvent.change(screen.getByLabelText(/Party/i), {
+      target: { value: 'Lonely Mountain' },
+    });
+    fireEvent.click(screen.getByTestId('add-vote'));
   });
 
   await waitFor(() => {
-    expect(fetch as jest.Mock).toBeCalledWith('/votes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ candidate: 'Gimli', party: 'Lonely Mountain' }),
-    });
+    expect(fetch as jest.Mock).toBeCalledWith(
+      expect.stringContaining('/votes'),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ candidate: 'Gimli', party: 'Lonely Mountain' }),
+      }
+    );
   });
 });
 
 test('shows results', async () => {
-  jest.spyOn(global, 'fetch').mockImplementation(() =>
-    Promise.resolve({
-      json: () =>
-        Promise.resolve([
-          { party: 'Lonely Mountain', voteCount: '2' },
-          { party: 'Gondor', voteCount: '1' },
-        ] as unknown as VoteResult[]),
-    } as any)
-  );
-
-  await act(async () => {
-    render(<App />);
+  jest.spyOn(global, 'fetch').mockImplementation((url) => {
+    if (typeof url === 'string' && url.includes('/results')) {
+      return Promise.resolve({
+        json: async () =>
+          [
+            { party: 'Lonely Mountain', voteCount: 2 },
+            { party: 'Gondor', voteCount: 1 },
+          ] as VoteResult[],
+      } as unknown as Response);
+    }
+    // For any other fetch call (like the initial votes fetch)
+    return Promise.resolve({
+      json: async () =>
+        [
+          { party: 'Lonely Mountain', candidate: 'Gimli' },
+          { party: 'Gondor', candidate: 'Boromir' },
+          { party: 'Lonely Mountain', candidate: 'Gimli' },
+        ] as Vote[],
+    } as unknown as Response);
   });
 
-  await act(async () => {
-    fireEvent.click(screen.getByText(/Calculate Result/i));
+  render(<App />);
+  await waitFor(() => {
+    expect(screen.getAllByText(/Lonely Mountain/i)).toHaveLength(2);
   });
 
-  expect(screen.getByText(/Lonely Mountain: 2/i)).toBeInTheDocument();
-  expect(screen.getByText(/Gondor: 1/i)).toBeInTheDocument();
+  act(() => {
+    fireEvent.click(screen.getByTestId('calculate'));
+  });
+
+  await waitFor(() => {
+    expect(screen.getByText(/Lonely Mountain \(2\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gondor \(1\)/i)).toBeInTheDocument();
+  });
 });

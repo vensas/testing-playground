@@ -25,7 +25,7 @@ podman run --name test-db -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES
 ### Run the backend service
 
 ```sh
-dotnet run src/backend/Testable.Api/Testable.Api.csproj
+dotnet run --project src/backend/Testable.Api/Testable.Api.csproj
 ```
 
 ### Configure the frontend application
@@ -33,7 +33,7 @@ dotnet run src/backend/Testable.Api/Testable.Api.csproj
 Create a `.env` file in the `src/frontend` directory with the following content:
 
 ```properties
-REACT_APP_BACKEND_URL=http://localhost:5000
+BACKEND_URL=http://localhost:5266
 ```
 
 ### Run the frontend application

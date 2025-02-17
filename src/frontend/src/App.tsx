@@ -11,12 +11,17 @@ import {
   ListItemText,
   Typography,
   Box,
+  ListItemAvatar,
+  Paper,
 } from '@mui/material';
 import { Stack } from '@mui/system';
+import { CheckCircle, HowToVote, ThumbUpAltOutlined } from '@mui/icons-material';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const votesUrl = `${BACKEND_URL}/votes`;
-const resultsUrl = `${BACKEND_URL}/results`;
+// Load BACKEND_URL from environment variables
+const BACKEND_URL = process.env.BACKEND_URL;
+
+const votesUrl = encodeURI(`${BACKEND_URL}/votes`);
+const resultsUrl = encodeURI(`${BACKEND_URL}/results`);
 
 export interface Vote {
   candidate: string;
@@ -73,56 +78,78 @@ const App: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant='h1'>Votes List</Typography>
-      <Stack spacing={2} direction='row'>
-        <TextField
-          label='Candidate'
-          value={candidate}
-          onChange={(e) => setCandidate(e.target.value)}
-        />
-        <TextField
-          label='Party'
-          value={party}
-          onChange={(e) => setParty(e.target.value)}
-        />
-        <Button onClick={addVote}>Add Vote</Button>
-        <Button onClick={calculateResult}>Calculate Result</Button>
-      </Stack>
-      {votes?.length === 0 && (
-        <Typography variant='caption'>No votes</Typography>
-      )}
-      {!!votes?.length && (
-        <List>
-          {votes?.map((vote, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={`${vote.candidate} (${vote.party})`} />
-            </ListItem>
-          ))}
-        </List>
-      )}
-      <Dialog open={resultOpen} onClose={() => setResultOpen(false)}>
-        <DialogTitle>Vote Result</DialogTitle>
-        <DialogContent>
-          {!!result?.length ? (
-            <List>
-              {result != null &&
-                result.map((r) => (
-                  <ListItem key={r.party}>
-                    {r.party}: {r.voteCount}
-                  </ListItem>
-                ))}
-            </List>
-          ) : (
-            <Typography variant='caption'>No Result!</Typography>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Box sx={{ background: 'white' }}>
-        <Typography variant='h1' color='white'>
-          Not readable
+      <Typography variant='h1'>Votes</Typography>
+      <Paper
+        sx={(theme) => ({ mt: theme.spacing(4), padding: theme.spacing(2) })}
+      >
+        <Typography variant='h4'>Add Vote</Typography>
+        <Stack spacing={2} direction='row'>
+          <TextField
+            label='Candidate'
+            value={candidate}
+            onChange={(e) => setCandidate(e.target.value)}
+          />
+          <TextField
+            label='Party'
+            value={party}
+            onChange={(e) => setParty(e.target.value)}
+          />
+          <Button
+            variant='outlined'
+            disabled={!candidate?.length || !party?.length}
+            onClick={addVote}
+          >
+            Add Vote
+          </Button>
+          <Button variant='contained' onClick={calculateResult}>
+            Calculate Result
+          </Button>
+        </Stack>
+      </Paper>
+      <Paper
+        sx={(theme) => ({ mt: theme.spacing(4), padding: theme.spacing(2) })}
+      >
+        <Typography variant='h4'>All Votes</Typography>
+        <Typography variant='caption'>
+          Candidate (Party). Total : {votes?.length}
         </Typography>
-      </Box>
+        {votes?.length === 0 && (
+          <Typography variant='caption'>No votes</Typography>
+        )}
+        {!!votes?.length && (
+          <List>
+            {votes?.map((vote, index) => (
+              <ListItem key={index}>
+                <ListItemAvatar>
+                  <ThumbUpAltOutlined />
+                </ListItemAvatar>
+                <ListItemText primary={`${vote.candidate} (${vote.party})`} />
+              </ListItem>
+            ))}
+          </List>
+        )}
+        <Dialog open={resultOpen} onClose={() => setResultOpen(false)}>
+          <DialogTitle>Vote Result</DialogTitle>
+          <DialogContent>
+            {!!result?.length ? (
+              <List>
+                {result != null &&
+                  result.map((result,index) => (
+                    <ListItem key={result.party} >
+                       <ListItemAvatar>
+                        {index === 0 && <CheckCircle color="success" />}
+                       {index > 0 &&  <HowToVote /> }
+                      </ListItemAvatar>
+                      <ListItemText primary={`${result.party} (${result.voteCount})`} />
+                    </ListItem>
+                  ))}
+              </List>
+            ) : (
+              <Typography variant='caption'>No Result!</Typography>
+            )}
+          </DialogContent>
+        </Dialog>
+      </Paper>
     </Container>
   );
 };

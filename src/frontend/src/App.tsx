@@ -125,7 +125,11 @@ const App: React.FC = () => {
           Candidate (Party). Total : {votes?.length}
         </Typography>
         {votes?.length === 0 && (
-          <Typography variant='caption' data-testid="no-votes">No votes</Typography>
+          <Box>
+            <Typography variant='caption' data-testid='no-votes'>
+              No votes
+            </Typography>
+          </Box>
         )}
         {!!votes?.length && (
           <List>

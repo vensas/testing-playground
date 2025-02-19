@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using ValidationException = FluentValidation.ValidationException;
 
+// App setup
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -16,20 +17,30 @@ builder.Services.AddScoped<VoteRegistrar>();
 builder.Services.AddScoped<VoteResultCalculator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors();
 }
 
+// Auto Migrate and DB Reset
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
 await dbContext.Database.MigrateAsync();
-
 await dbContext.Votes.ExecuteDeleteAsync();
 
+// Endpoints
 var votesGroup = app.MapGroup("/votes")
     .WithTags("Votes");
 votesGroup.MapGet("/", async (DatabaseContext db) =>
@@ -52,10 +63,11 @@ resultsGroup.MapGet("/", async (VoteResultCalculator calculator) =>
         var aggregatedVotes = await calculator.CalculateResultsAsync();
         return Results.Ok(aggregatedVotes);
     })
-    // Add result type to the OpenAPI document
     .Produces<List<VoteResult>>(200);
 
 app.Run();
+
+// Classes
 
 public record Vote
 {

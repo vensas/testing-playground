@@ -42,14 +42,6 @@ module.exports = (env) => {
     devServer: {
       port: 3000, // you can change the port
       historyApiFallback: true, // enable history API fallback for SPAs
-      headers: {
-        // This allows requests from any origin, adjust if needed
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods':
-          'GET, HEAD, POST, PUT, DELETE, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers':
-          'X-Requested-With, Content-Type, Authorization',
-      },
     },
     module: {
       rules: [

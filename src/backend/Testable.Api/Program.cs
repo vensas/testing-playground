@@ -38,7 +38,6 @@ if (app.Environment.IsDevelopment())
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<IDatabaseContext>();
 await dbContext.Database.MigrateAsync();
-await dbContext.Votes.ExecuteDeleteAsync();
 
 // Endpoints
 var votesGroup = app.MapGroup("/votes")

@@ -7,13 +7,14 @@ using Microsoft.Extensions.Options;
 using Npgsql;
 using Respawn;
 using Testcontainers.PostgreSql;
+using VerifyTests.Http;
 
 namespace Testable.IntTests;
 
 public sealed class IntTestApplicationFactory : WebApplicationFactory<DatabaseContext>, IAsyncLifetime
 {
-    private Respawner _respawner = default!;
-    private DbConnection _dbConnection = default!;
+    private Respawner _respawner = null!;
+    private DbConnection _dbConnection = null!;
     private readonly PostgreSqlContainer _postgreSqlContainer = new PostgreSqlBuilder()
         .WithDatabase("test-db")
         .WithUsername("postgres")
@@ -52,7 +53,7 @@ public sealed class IntTestApplicationFactory : WebApplicationFactory<DatabaseCo
 
     private Task InitializeDatabaseAsync()
     {
-        using var c = CreateClient(); // Create a client to ensure the database is created
+        using var c = CreateClient();
         return Task.CompletedTask;
     }
 
@@ -62,12 +63,16 @@ public sealed class IntTestApplicationFactory : WebApplicationFactory<DatabaseCo
         await _dbConnection.OpenAsync();
         
         using var scope = Services.CreateScope();
-        var dbOptions = scope.ServiceProvider.GetRequiredService<IOptions<DatabaseOptions>>().Value;
-        
         _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
-            SchemasToInclude = [dbOptions.SchemaName],
+            SchemasToInclude = ["testable"],
         });
+    }
+
+    public (HttpClient, RecordingHandler) CreateHttpRecordingClient()
+    {
+        var recording = new RecordingHandler(recording: false);
+        return (CreateDefaultClient(ClientOptions.BaseAddress, recording), recording);
     }
 }

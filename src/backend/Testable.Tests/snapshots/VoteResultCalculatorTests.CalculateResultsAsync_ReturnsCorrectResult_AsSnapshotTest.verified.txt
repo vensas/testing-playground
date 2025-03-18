@@ -1,0 +1,10 @@
+﻿[
+  {
+    Party: Party A,
+    VoteCount: 2
+  },
+  {
+    Party: Party B,
+    VoteCount: 1
+  }
+]

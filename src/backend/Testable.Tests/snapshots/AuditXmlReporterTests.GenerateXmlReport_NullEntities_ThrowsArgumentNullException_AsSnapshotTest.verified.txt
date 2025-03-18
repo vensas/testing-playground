@@ -1,0 +1,10 @@
+﻿{
+  Type: ArgumentNullException,
+  Message: Value cannot be null.,
+  ParamName: auditEntities,
+  StackTrace:
+at System.ArgumentNullException.Throw(String paramName)
+at System.ArgumentNullException.ThrowIfNull(Object argument, String paramName)
+at Testable.Api.AuditXmlReporter.GenerateXmlReport(IEnumerable`1 auditEntities)
+at Testable.Tests.AuditXmlReporterTests.<>c.<GenerateXmlReport_NullEntities_ThrowsArgumentNullException_AsSnapshotTest>b__5_0()
+}

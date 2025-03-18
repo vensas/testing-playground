@@ -3,9 +3,7 @@ using Testable.AppHost.Extensions;
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresResource = builder
-    .AddPostgres("postgres")
-    .WithPgAdmin()
-    .WithDataVolume();
+    .AddPostgres("postgres");
 var postgresDatabaseResource = postgresResource
     .AddDatabase("postgres-database", "testable");
 

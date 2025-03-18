@@ -1,0 +1,54 @@
+﻿{
+  results: [
+    {
+      Candidate: Faramir,
+      Party: Gondor
+    },
+    {
+      Candidate: Legolas,
+      Party: Woodelves
+    },
+    {
+      Candidate: Boromir,
+      Party: Gondor
+    }
+  ],
+  Sends: [
+    {
+      RequestUri: http://localhost/votes,
+      RequestMethod: POST,
+      RequestContent: {"candidate":"Boromir","party":"Gondor"},
+      ResponseStatus: Created 201,
+      ResponseHeaders: {
+        Location: /votes/Guid_1
+      },
+      ResponseContent: "Guid_1"
+    },
+    {
+      RequestUri: http://localhost/votes,
+      RequestMethod: POST,
+      RequestContent: {"candidate":"Legolas","party":"Woodelves"},
+      ResponseStatus: Created 201,
+      ResponseHeaders: {
+        Location: /votes/Guid_2
+      },
+      ResponseContent: "Guid_2"
+    },
+    {
+      RequestUri: http://localhost/votes,
+      RequestMethod: POST,
+      RequestContent: {"candidate":"Faramir","party":"Gondor"},
+      ResponseStatus: Created 201,
+      ResponseHeaders: {
+        Location: /votes/Guid_3
+      },
+      ResponseContent: "Guid_3"
+    },
+    {
+      RequestUri: http://localhost/votes,
+      RequestMethod: GET,
+      ResponseStatus: OK 200,
+      ResponseContent: [{"candidate":"Faramir","party":"Gondor"},{"candidate":"Legolas","party":"Woodelves"},{"candidate":"Boromir","party":"Gondor"}]
+    }
+  ]
+}

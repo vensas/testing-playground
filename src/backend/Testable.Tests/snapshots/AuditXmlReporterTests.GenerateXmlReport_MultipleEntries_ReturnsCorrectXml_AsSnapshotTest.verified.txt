@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<AuditReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <AuditEntry Id="1702c6caac3244ce848d9cb8a65b832a" EntityId="6537b7ca0e59461097d3536bdd1f228a" Action="WRITE" Timestamp="2025-03-18T14:20:47.318059Z">
+    <EntityName>TestEntity</EntityName>
+    <Payload>{"data":"test"}</Payload>
+  </AuditEntry>
+  <AuditEntry Id="21ba56bc722649aa9831d3fa8b27b83d" EntityId="92b40209cacc4a8a8b798d2d3bfd4041" Action="READ" Timestamp="2025-07-12T08:07:27.318059Z">
+    <EntityName>TestEntity</EntityName>
+    <Payload>{"data":"test"}</Payload>
+  </AuditEntry>
+</AuditReport>

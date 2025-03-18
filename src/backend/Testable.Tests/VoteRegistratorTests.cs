@@ -5,13 +5,13 @@ namespace Testable.Tests;
 
 public class VoteRegistrarTests
 {
-    private readonly IDatabaseContext _databaseContext;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly VoteRegistrar _voteRegistrar;
 
     public VoteRegistrarTests()
     {
-        _databaseContext = Substitute.For<IDatabaseContext>();
-        _voteRegistrar = new VoteRegistrar(new VoteValidator(), _databaseContext);
+        _unitOfWork = Substitute.For<IUnitOfWork>();
+        _voteRegistrar = new VoteRegistrar(new VoteValidator(), _unitOfWork, new Auditor());
     }
 
     [Fact]
@@ -24,9 +24,11 @@ public class VoteRegistrarTests
         await _voteRegistrar.RegisterVoteAsync(vote);
 
         // Assert
-        await _databaseContext.Received(1).Votes.AddAsync(Arg.Is<VoteEntity>(v =>
+        await _unitOfWork.Received(1).Votes.AddAsync(Arg.Is<VoteEntity>(v =>
             v.Candidate == vote.Candidate && v.Party == vote.Party));
-        await _databaseContext.Received(1).SaveChangesAsync();
+        await _unitOfWork.Received(1).Audits.AddAsync(Arg.Is<AuditEntity>(v =>
+            v.Action == AuditActions.Write && v.EntityName == "VoteEntity"));
+        await _unitOfWork.Received(2).SaveChangesAsync();
     }
 
     public static IEnumerable<object[]> GetInvalidVotes()

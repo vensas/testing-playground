@@ -10,8 +10,11 @@ using ValidationException = FluentValidation.ValidationException;
 
 // App setup
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
+
 builder.Services.AddDbContext<IDatabaseContext, DatabaseContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddScoped<VoteValidator>();
 builder.Services.AddScoped<VoteRegistrar>();
 builder.Services.AddScoped<VoteResultCalculator>();
@@ -22,8 +25,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
     {
         builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     });
 });
 var app = builder.Build();
@@ -31,8 +34,9 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors();
 }
+
+app.UseCors();
 
 // Auto Migrate and DB Reset
 using var scope = app.Services.CreateScope();
@@ -45,7 +49,7 @@ var votesGroup = app.MapGroup("/votes")
 votesGroup.MapGet("/", async (DatabaseContext db) =>
 {
     var votes = await db.Votes
-        .Select(v => new { v.Id, v.Candidate, v.Party, v.Timestamp })
+        .Select(v => new {v.Id, v.Candidate, v.Party, v.Timestamp})
         .OrderByDescending(v => v.Timestamp)
         .ToListAsync();
     return Results.Ok(votes);
@@ -58,13 +62,12 @@ votesGroup.MapPost("/", async (VoteRegistrar voteRegistrar, [FromBody] Vote vote
 var resultsGroup = app.MapGroup("/results")
     .WithTags("Results");
 resultsGroup.MapGet("/", async (VoteResultCalculator calculator) =>
-    {
-        var aggregatedVotes = await calculator.CalculateResultsAsync();
-        return Results.Ok(aggregatedVotes);
-    })
-    .Produces<List<VoteResult>>(200);
+{
+    var aggregatedVotes = await calculator.CalculateResultsAsync();
+    return TypedResults.Ok(aggregatedVotes);
+});
 
-app.Run();
+await app.RunAsync();
 
 // Classes
 

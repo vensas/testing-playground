@@ -8,7 +8,9 @@ module.exports = (env) => {
   env = {
     ...parsed,
     ...env,
+    ...process.env,
   };
+
   return {
     entry: './src/index.tsx', // entry point of the application
     output: {
@@ -36,11 +38,13 @@ module.exports = (env) => {
         process: 'process/browser',
       }),
       new webpack.DefinePlugin({
-        'process.env.BACKEND_URL': JSON.stringify(env.BACKEND_URL),
+        'process.env.BACKEND_URL': JSON.stringify(
+          env.PUBLIC_BACKEND_URL
+        ),
       }),
     ],
     devServer: {
-      port: 3000, // you can change the port
+      port: parseInt(env.PUBLIC_PORT ?? '0') || 3000, // you can change the port
       historyApiFallback: true, // enable history API fallback for SPAs
     },
     module: {

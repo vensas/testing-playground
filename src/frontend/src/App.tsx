@@ -22,10 +22,10 @@ import {
 } from '@mui/icons-material';
 
 // Load BACKEND_URL from environment variables
-const BACKEND_URL = process.env.BACKEND_URL;
+const backendUrl = process.env.BACKEND_URL;
 
-const votesUrl = encodeURI(`${BACKEND_URL}/votes`);
-const resultsUrl = encodeURI(`${BACKEND_URL}/results`);
+const votesUrl = encodeURI(`${backendUrl}/votes`);
+const resultsUrl = encodeURI(`${backendUrl}/results`);
 
 export interface Vote {
   candidate: string;
@@ -82,35 +82,38 @@ const App: React.FC = () => {
 
   return (
     <Container>
-      <Typography variant='h3'>Votes</Typography>
+      <Typography variant="h3">Votes</Typography>
       <Paper
-        sx={(theme) => ({ mt: theme.spacing(4), padding: theme.spacing(2) })}
+        sx={(theme) => ({
+          mt: theme.spacing(4),
+          padding: theme.spacing(2),
+        })}
       >
-        <Typography variant='h4'>Add Vote</Typography>
-        <Stack spacing={2} direction='row'>
+        <Typography variant="h4">Add Vote</Typography>
+        <Stack spacing={2} direction="row">
           <TextField
-            label='Candidate'
+            label="Candidate"
             value={candidate}
-            data-testid='candidate'
+            data-testid="candidate"
             onChange={(e) => setCandidate(e.target.value)}
           />
           <TextField
-            label='Party'
+            label="Party"
             value={party}
-            data-testid='party'
+            data-testid="party"
             onChange={(e) => setParty(e.target.value)}
           />
           <Button
-            data-testid='add-vote'
-            variant='outlined'
+            data-testid="add-vote"
+            variant="outlined"
             disabled={!candidate?.length || !party?.length}
             onClick={addVote}
           >
             Add Vote
           </Button>
           <Button
-            data-testid='calculate'
-            variant='contained'
+            data-testid="calculate"
+            variant="contained"
             onClick={calculateResult}
           >
             Calculate Result
@@ -118,15 +121,18 @@ const App: React.FC = () => {
         </Stack>
       </Paper>
       <Paper
-        sx={(theme) => ({ mt: theme.spacing(4), padding: theme.spacing(2) })}
+        sx={(theme) => ({
+          mt: theme.spacing(4),
+          padding: theme.spacing(2),
+        })}
       >
-        <Typography variant='h4'>All Votes</Typography>
-        <Typography variant='caption'>
+        <Typography variant="h4">All Votes</Typography>
+        <Typography variant="caption">
           Candidate (Party). Total : {votes?.length}
         </Typography>
         {votes?.length === 0 && (
           <Box>
-            <Typography variant='caption' data-testid='no-votes'>
+            <Typography variant="caption" data-testid="no-votes">
               No votes
             </Typography>
           </Box>
@@ -138,12 +144,17 @@ const App: React.FC = () => {
                 <ListItemAvatar>
                   <ThumbUpAltOutlined />
                 </ListItemAvatar>
-                <ListItemText primary={`${vote.candidate} (${vote.party})`} />
+                <ListItemText
+                  primary={`${vote.candidate} (${vote.party})`}
+                />
               </ListItem>
             ))}
           </List>
         )}
-        <Dialog open={resultOpen} onClose={() => setResultOpen(false)}>
+        <Dialog
+          open={resultOpen}
+          onClose={() => setResultOpen(false)}
+        >
           <DialogTitle>Vote Result</DialogTitle>
           <DialogContent>
             {!!result?.length ? (
@@ -152,7 +163,9 @@ const App: React.FC = () => {
                   result.map((result, index) => (
                     <ListItem key={result.party}>
                       <ListItemAvatar>
-                        {index === 0 && <CheckCircle color='success' />}
+                        {index === 0 && (
+                          <CheckCircle color="success" />
+                        )}
                         {index > 0 && <HowToVote />}
                       </ListItemAvatar>
                       <ListItemText
@@ -162,7 +175,7 @@ const App: React.FC = () => {
                   ))}
               </List>
             ) : (
-              <Typography variant='caption'>No Result!</Typography>
+              <Typography variant="caption">No Result!</Typography>
             )}
           </DialogContent>
         </Dialog>

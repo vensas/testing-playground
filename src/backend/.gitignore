@@ -17,8 +17,8 @@ nuget.sh
 .volumes/
 
 # build/publish folders
-DotnetApiTemplate/certificates
-DotnetApiTemplate/publish
+/certificates
+/publish
 
 # Apple files
 .DS_Store
@@ -34,3 +34,7 @@ global.json
 
 # certificates
 *.cer
+
+# Verify
+*.received.*
+*.received/

@@ -1,0 +1,69 @@
+﻿{
+  Status: 200 OK,
+  Content: {
+    Headers: {
+      Content-Length: 1802,
+      Content-Type: text/xml; charset=utf-8
+    },
+    Value: {
+      ?xml: {
+        @version: 1.0,
+        @encoding: utf-16
+      },
+      AuditReport: {
+        @xmlns:xsi: http://www.w3.org/2001/XMLSchema-instance,
+        @xmlns:xsd: http://www.w3.org/2001/XMLSchema,
+        AuditEntry: [
+          {
+            @Id: Guid_1,
+            @EntityId: Guid_2,
+            @Action: WRITE,
+            @Timestamp: DateTimeOffset_1,
+            EntityName: VoteEntity,
+            Payload: {"Candidate":"Boromir","Party":"Gondor"}
+          },
+          {
+            @Id: Guid_3,
+            @EntityId: Guid_4,
+            @Action: WRITE,
+            @Timestamp: DateTimeOffset_2,
+            EntityName: VoteEntity,
+            Payload: {"Candidate":"Legolas","Party":"Woodelves"}
+          },
+          {
+            @Id: Guid_5,
+            @EntityId: Guid_6,
+            @Action: WRITE,
+            @Timestamp: DateTimeOffset_3,
+            EntityName: VoteEntity,
+            Payload: {"Candidate":"Faramir","Party":"Gondor"}
+          },
+          {
+            @Id: Guid_7,
+            @EntityId: Guid_6,
+            @Action: READ,
+            @Timestamp: DateTimeOffset_4,
+            EntityName: VoteEntity,
+            Payload: {"Candidate":"Faramir","Party":"Gondor"}
+          },
+          {
+            @Id: Guid_8,
+            @EntityId: Guid_4,
+            @Action: READ,
+            @Timestamp: DateTimeOffset_5,
+            EntityName: VoteEntity,
+            Payload: {"Candidate":"Legolas","Party":"Woodelves"}
+          },
+          {
+            @Id: Guid_9,
+            @EntityId: Guid_2,
+            @Action: READ,
+            @Timestamp: DateTimeOffset_6,
+            EntityName: VoteEntity,
+            Payload: {"Candidate":"Boromir","Party":"Gondor"}
+          }
+        ]
+      }
+    }
+  }
+}

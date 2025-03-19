@@ -21,6 +21,7 @@ Showcase several ways to test modern applications by example of a .NET service a
 - [Playwright](https://playwright.dev)
 - [Axe](https://www.deque.com/axe/)
 - [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/)
+- [Verify](https://github.com/VerifyTests/Verify)
 
 ## Usage
 
